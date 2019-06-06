@@ -1,12 +1,14 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import CityList from './CityList';
-import WeatherDetailScreen from './WeatherDetailScreen';
+// import WeatherDetailScreen from './WeatherDetailScreen';
+import Test from './test';
 
 const AppNavigator = createStackNavigator(
   {
     CityList: CityList,
-    Detail: WeatherDetailScreen,
+    // Detail: WeatherDetailScreen,
+      Test: Test,
   },
   {
     initialRouteName: 'CityList',

@@ -28,7 +28,8 @@ export default class CityList extends React.Component {
 
   onPressCity(item) {
     this.props.navigation.navigate(
-      'Detail',
+      // 'Detail',
+        'Test',
       {
         city: item
       }
@@ -57,8 +58,8 @@ export default class CityList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    marginTop: Constants.statusBarHeight,
+    backgroundColor: 'rgba(236, 240, 241, 1)',
+    // marginTop: Constants.statusBarHeight,
   },
 
   item: {
@@ -67,10 +68,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
     borderWidth: 1,
-    borderColor: 'orange',
+    borderColor: 'rgba(232, 236, 241, 1)',
   },
   text: {
+      color: 'white',
     fontSize: 20,
     textAlign: 'center',
+      textShadowColor: 'black',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 1,
   }
 });
