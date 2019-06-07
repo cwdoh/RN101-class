@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ART, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ART, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Constants, MapView } from 'expo';
 import Slider from "react-native-slider";
 import { AreaChart, Grid } from 'react-native-svg-charts'
@@ -18,6 +18,7 @@ export default class WeatherDetailScreen extends React.Component {
         this.state = {
             value: 1,
             isLoading: true,
+            trigger: false,
         };
     }
 
@@ -36,8 +37,22 @@ export default class WeatherDetailScreen extends React.Component {
                     isLoading: false,
                 });
             });
+        fetch(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=${city}`)
+            .then(response => response.json())
+            .then(info => {
+                this.setState( {
+                    ...info,
 
+                });
+            });
     }
+
+    trigger_it = () => {
+        this.setState({
+            trigger:true,
+        });
+        console.log(this.state.trigger);
+    };
 
     render() {
         if (this.state.isLoading) {
@@ -53,24 +68,24 @@ export default class WeatherDetailScreen extends React.Component {
         for(i = 0; i < 36; i++) {
             new_data.push(get_temp.list[i]["main"]["temp"]);
         }
-        let cels = get_temp.list[0]["main"]["temp"] - 273.15;
+        const desc = Object.keys(this.state.query.pages);
+        const hello = desc[0];
 
-        // const { info } = this.state;
+        // const hello = Object.keys(desc.desc[0]);
 
-
-        // // let celsius = this.state.main.temp - 273.15;
-        // function msToTime(duration) {
-        //     var milliseconds = parseInt((duration%1000)/100)
-        //         , seconds = parseInt((duration/1000)%60)
-        //         , minutes = parseInt((duration/(1000*60))%60)
-        //         , hours = parseInt((duration/(1000*60*60))%24);
-        //
-        //     hours = (hours < 10) ? "0" + hours : hours;
-        //     minutes = (minutes < 10) ? "0" + minutes : minutes;
-        //     seconds = (seconds < 10) ? "0" + seconds : seconds;
-        //
-        //     return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-        // }
+        // console.log(this.state.query.pages["284812"].extract);
+        if(this.state.trigger === true) {
+            summary = <ScrollView
+                style={{flex:0.2}}>
+                <Text
+                    style={{textAlign:"center"}}>{this.state.query.pages[hello].extract}</Text>
+            </ScrollView>;
+        } else {
+            summary = <ScrollView
+                style={{flex:0.2, backgroundColor: 'rgba(242, 241, 239, 1)'
+                }}
+            ><Text style={{textAlign:"center",fontSize:20}}>"Pin을 클릭하면 지역 정보를 얻을 수 있습니다."</Text></ScrollView>;
+        }
 
         return (
 
@@ -105,21 +120,21 @@ export default class WeatherDetailScreen extends React.Component {
                         textShadowColor: 'white',
                         textShadowOffset: { width: 1, height: 1 },
                         textShadowRadius: 1,
-                    }}>온도 : {(get_temp.list[parseInt(this.state.value * 35)]["main"]["temp"] - 273.15).toFixed(1)}</Text>
+                    }}>Temperature : {(get_temp.list[parseInt(this.state.value * 35)]["main"]["temp"] - 273.15).toFixed(1)}</Text>
                     <Text style={{
                         color:'black',
                         fontSize:20,
                         textShadowColor: 'white',
                         textShadowOffset: { width: 1, height: 1 },
                         textShadowRadius: 1,
-                    }}>습도 : {get_temp.list[parseInt(this.state.value * 35)]["main"]["humidity"]}</Text>
+                    }}>Humidity : {get_temp.list[parseInt(this.state.value * 35)]["main"]["humidity"]}</Text>
                     <Text style={{
                         color:'black',
                         fontSize:20,
                         textShadowColor: 'white',
                         textShadowOffset: { width: 1, height: 1 },
                         textShadowRadius: 1,
-                    }}>날씨 : {get_temp.list[parseInt(this.state.value * 35)].weather[0]["main"]}</Text>
+                    }}>{get_temp.list[parseInt(this.state.value * 35)].weather[0]["main"]}</Text>
                 </View>
                 {/*<Text*/}
                 {/*style={{backgroundColor: "gray"}}>{celsius}</Text>*/}
@@ -146,13 +161,20 @@ export default class WeatherDetailScreen extends React.Component {
                     initialRegion={{
                         latitude: get_temp.city.coord.lat,
                         longitude: get_temp.city.coord.lon,
-                        latitudeDelta: 0.0422,
-                        longitudeDelta: 0.0421,
+                        latitudeDelta: 0.32,
+                        longitudeDelta: 0.4,
                     }}
                 >
-                    <MapView.Marker key={get_temp.list[35]["cnt"]} coordinate={{latitude:get_temp.city.coord.lat, longitude:get_temp.city.coord.lon}} title={get_temp.city.name} />
+                    <MapView.Marker
+                        style={{height:50}}
+                        key={get_temp.list[35]["cnt"]} coordinate={{latitude:get_temp.city.coord.lat, longitude:get_temp.city.coord.lon}}
+                                    description={this.state.query.pages[hello].extract}
+                                    title={get_temp.city.name}
+                                    onPress={this.trigger_it}
+                    />
 
                 </MapView>
+                {summary}
 
             </View>
         );
