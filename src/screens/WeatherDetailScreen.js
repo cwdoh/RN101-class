@@ -46,7 +46,7 @@ export default class WeatherDetailScreen extends React.Component {
       '매우 흐림'
     ];
 
-    const text = (clouds === null) ? '정보 없음' : cloudStatus[Math.max(parseInt(clouds / 20), 4)];
+    const text = (clouds === null) ? '정보 없음' : cloudStatus[Math.min(parseInt(clouds / 20), 4)];
 
     return (
       <Text>구름: {text}</Text>
